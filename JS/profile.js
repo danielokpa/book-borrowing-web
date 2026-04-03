@@ -157,8 +157,8 @@ async function loadProfile() {
 
   document.getElementById("name").innerText = user.fullName;
   document.getElementById("email").innerText = user.email;
-  document.getElementById("matric").innerText = user.matricNo || "-";
-  document.getElementById("phone").innerText = user.phoneNumber || "-";
+  // document.getElementById("matric").innerText = user.matricNo || "-";
+  // document.getElementById("phone").innerText = user.phoneNumber || "-";
 }
 
 // ===== METRICS =====
