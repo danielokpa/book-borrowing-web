@@ -193,12 +193,15 @@ async function processOrder() {
 
     showToast("Borrowing successful 🎉");
     console.log('Success data: ', json);
-    sessionStorage.setItem('borrow_success', JSON.stringify(json));
+    sessionStorage.setItem('borrow_success', JSON.stringify(json?.data));
 
     btnText.textContent = "Success!";
 
+    console.log('json: ', json);
     setTimeout(() => {
-      window.location.href = "success.html";
+      // Instead of just success.html
+      window.location.href = `success.html?orderId=${json.data.borrowBatchId}`;
+
     }, 1200);
 
   } catch (err) {
