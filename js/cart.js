@@ -326,4 +326,4 @@ if (confirmBorrowBtn) {
   confirmBorrowBtn.addEventListener("click", confirmBorrowing);
 }
 
-fetchCart();
+fetchCart(); 
