@@ -33,9 +33,26 @@ async function refreshAccessToken() {
 /* ================= LOAD SUCCESS DATA ================= */
 
 async function loadSuccessData() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const orderId = urlParams.get('orderId');
 
   let data = sessionStorage.getItem("borrow_success");
 
+  if (data) {
+    console.log('data from session: ', data);
+    renderSuccess(JSON.parse(data));
+    // Optional: sessionStorage.removeItem("borrow_success");
+    return;
+  }
+
+  // 2. If no session data, but we have an ID, fetch specific record
+  // if (orderId) {
+  //   await fetchSpecificOrder(orderId);
+  // } else {
+  //   // 3. Last resort: Get the most recent active borrow
+  //   await fetchFromBackend();
+  //   return;
+  // }
   // If user refreshes page → fallback to API
   if (!data) {
     await fetchFromBackend();
@@ -48,6 +65,20 @@ async function loadSuccessData() {
 }
 
 /* ================= FETCH FALLBACK ================= */
+
+async function fetchSpecificOrder(id) {
+  let token = getToken();
+  try {
+    const res = await fetch(`${API_BASE_URL}/users/borrows/${id}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    const json = await res.json();
+    if (json.data) renderFallback(json.data);
+  } catch (err) {
+    console.error("Failed to fetch specific order:", err);
+  }
+}
+
 
 async function fetchFromBackend() {
 
@@ -88,6 +119,7 @@ async function fetchFromBackend() {
 
 function renderSuccess(data) {
 
+  console.log('Success data: ', data);
   document.getElementById("orderId").textContent =
     data.borrowBatchId || "G7-BBS-XXXX";
 
@@ -95,7 +127,7 @@ function renderSuccess(data) {
     "₦" + (data.totalFee || 0).toFixed(2);
 
   document.getElementById("returnDate").textContent =
-    formatDate(data.dueAt);
+    formatDate(data.dueAt || data?.borrowed?.[0].dueAt);
 
   // clear after use (optional)
   sessionStorage.removeItem("borrow_success");
